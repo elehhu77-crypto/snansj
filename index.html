@@ -11468,7 +11468,7 @@ setTimeout(() => { var e = document.getElementById('pre'); if (e)
     function sync() {
         var ov = ['sp', 'lg', 'ch'].some(function (id) { var e = document.getElementById(id); return e && !e.classList.contains('off') &&
           getComputedStyle(e).display !== 'none'; });
-        var c = ov ? '#2a3543' : (getComputedStyle(document.documentElement).getPropertyValue('--navy').trim() || '#2f3a49');
+        var c = ov ? (getComputedStyle(document.documentElement).getPropertyValue('--stage').trim() || '#2a3543') : (getComputedStyle(document.documentElement).getPropertyValue('--navy').trim() || '#2f3a49');
         document.documentElement.style.background = ov ? c : '';
         document.body.style.background = ov ? c : '';
         m.setAttribute('content', c);
@@ -20149,7 +20149,46 @@ if(typeof window.render==='function'&&!window.render.__plx){var R0=window.render
    fetch(u,{cache:'force-cache',signal:ctl?ctl.signal:undefined}).then(function(r){if(!r.ok)throw 0;return r.text()})
     .then(function(t){clearTimeout(tm);ok(t)},function(){clearTimeout(tm);pick()})}
   else pick()})};
- window.schDownload=function(id,btn,force){window.__schForce=!!force;
+/* هوية المدرسة داخل ملفها المصدَّر: الاسم + الشعار + اللون (شاشة البداية، الدخول، رأس التطبيق، المانيفست) */
+ var IDF=function(C){try{
+  var K='iqra_ns_'+C+'__iqra_admin_v1',done=0;
+  var R0=(function(){try{var d=JSON.parse(localStorage.getItem(K));return d&&d.schools&&d.schools[0]||null}catch(e){return null}})(),rec=function(){return R0};
+  var fit=function(h){var c=[1,3,5].map(function(i){return parseInt(h.substr(i,2),16)}),n=0,
+   L=function(a){return(.299*a[0]+.587*a[1]+.114*a[2])/255};
+   while(L(c)>.42&&n++<14)c=c.map(function(v){return Math.round(v*.9)});
+   return '#'+c.map(function(v){return('0'+v.toString(16)).slice(-2)}).join('')};
+  var logoOk=function(l){return /^data:image\/(png|jpe?g|webp|gif|svg\+xml);base64,/i.test(l||'')||/^https:\/\//i.test(l||'')};
+  var apply=function(){var s=rec();if(!s)return;
+   var col=/^#[0-9a-f]{6}$/i.test(s.color||'')?fit(String(s.color).toLowerCase()):'';
+   var r=document.documentElement;
+   if(col){r.style.setProperty('--navy',col);r.style.setProperty('--stage',col);
+    var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',col)}
+   var nm=String(s.name||'').trim();
+   if(nm){document.title=nm;var t=document.querySelector('meta[name="apple-mobile-web-app-title"]');if(t)t.setAttribute('content',nm.slice(0,14))}
+   var lg=logoOk(s.logo)?s.logo:'';
+   if(lg){Array.prototype.forEach.call(document.querySelectorAll('#sp img,#lf img:not(#brlogo),.hd img,.km-lg img'),function(i){if(i.getAttribute('src')!==lg)i.setAttribute('src',lg)});
+    var bl=document.getElementById('brlogo');if(bl)bl.style.display='none';
+    var ai=document.querySelector('link[rel="apple-touch-icon"]');
+    if(!ai){ai=document.createElement('link');ai.rel='apple-touch-icon';document.head.appendChild(ai)}
+    if(ai.getAttribute('href')!==lg)ai.setAttribute('href',lg);
+    var ic=document.querySelector('link[rel="icon"]');
+    if(!ic){ic=document.createElement('link');ic.rel='icon';document.head.appendChild(ic)}
+    if(ic.getAttribute('href')!==lg)ic.setAttribute('href',lg)}
+   if(!done&&document.readyState=='complete'){done=1;
+    Array.prototype.forEach.call(document.querySelectorAll('link[rel="manifest"]'),function(l){l.remove()});
+    var base=location.href.split('#')[0],mf={name:nm||'مدرسة',short_name:(nm||'مدرسة').slice(0,12),lang:'ar',dir:'rtl',display:'standalone',
+     orientation:'portrait',background_color:col||'#2a3543',theme_color:col||'#2a3543',start_url:base,scope:base.replace(/[^\/]*$/,'')};
+    if(lg&&/^data:/.test(lg))mf.icons=[{src:lg,sizes:'512x512',type:lg.slice(5,lg.indexOf(';')),purpose:'any'}];
+    var ml=document.createElement('link');ml.rel='manifest';
+    ml.href=URL.createObjectURL(new Blob([JSON.stringify(mf)],{type:'application/manifest+json'}));document.head.appendChild(ml)}};
+  apply();
+  document.addEventListener('DOMContentLoaded',apply);
+  window.addEventListener('load',function(){apply();
+   try{var mo=new MutationObserver(function(){apply()});
+    mo.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['src']});
+    setTimeout(function(){mo.disconnect()},15000)}catch(e){}});
+ }catch(e){console.error('identity',e)}};
+  window.schDownload=function(id,btn,force){window.__schForce=!!force;
   var t=btn.textContent;btn.disabled=true;btn.textContent='جارٍ التجهيز…';
   var wd=setTimeout(function(){btn.disabled=false;btn.textContent=t},45000);
   var done=function(m){clearTimeout(wd);btn.disabled=false;btn.textContent=m||t;if(m)setTimeout(function(){btn.textContent=t},2200)};
@@ -20158,6 +20197,7 @@ if(typeof window.render==='function'&&!window.render.__plx){var R0=window.render
    var ex=parent.__nsExtract;if(!ex){alert('تعذّر الاستخراج: حدّث ملف المنصة بالنسخة الجديدة');return done()}
    var data=ex(JSON.parse(JSON.stringify(db)),id);
    if(!data){alert('المدرسة غير موجودة');return done()}
+   if(id=='main'){data.set=data.set||{};data.set.pubCode=code}
    var name=(data.schools&&data.schools[0]&&data.schools[0].name)||'school';
    getSrc().then(function(h){
     var idx=h.indexOf('/* ===== IqraCore'),st=idx<0?-1:h.lastIndexOf('<'+'script>',idx);
@@ -20165,7 +20205,7 @@ if(typeof window.render==='function'&&!window.render.__plx){var R0=window.render
     var seed=SC+'(function(){try{var C='+JSON.stringify(code)+',K="iqra_ns_"+C+"__iqra_admin_v1";'
      +'if(!/[?&]school=/.test(location.search)){try{history.replaceState(null,"",location.pathname+"?school="+C+location.hash)}catch(e){}}'
      +'if(!localStorage.getItem(K))localStorage.setItem(K,JSON.stringify('+JSON.stringify(data).replace(/</g,'\\u003c')+'))}catch(e){console.error("seed",e)}})();'+EC+'\n';
-    var out=h.slice(0,st)+seed+h.slice(st);
+    var out=h.slice(0,st)+seed+SC+'('+IDF.toString()+')('+JSON.stringify(code)+');'+EC+'\n'+h.slice(st);
     var b=new Blob([out],{type:'text/html;charset=utf-8'}),a=document.createElement('a');
     a.href=URL.createObjectURL(b);a.download='school-'+code+'.html';document.body.appendChild(a);a.click();
     setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1500);done('تم التحميل ✓')
@@ -29667,7 +29707,7 @@ section#news>h2 {
 @@SCRIPT:2132@@
 
 <!-- ══════ [APP-19] JS · لون خلفية الصفحة الخارجية: يطابق الشاشة الحالية حتى لا تظهر شريحة بيضاء أسفلها ══════ -->
-@@SCRIPT:1294@@
+@@SCRIPT:1377@@
 
 <!-- ══════ [APP-20] JS · ضبط الفراغ السفلي في وضع التطبيق المثبّت (iOS) ══════ -->
 @@SCRIPT:717@@
@@ -29703,7 +29743,7 @@ section#news>h2 {
 <!-- ══════ [APP-33] JS · 🏫 هوية المدرسة في تطبيق الطالب وولي الأمر: لون + شعار + عبارة في صفحة الدخول ══════ -->
 @@SCRIPT:2786@@
 
-@@SCRIPT:1096735@@
+@@SCRIPT:1100044@@
 
 <!-- ══════ [APP-34] JS · لوحة الإدارة مدمجة كنص عادي غير مشفّر داخل adminSrc؛ وسم الإغلاق فيها مكتوب بشرط ══════ -->
 @@SCRIPT:1040@@
