@@ -1195,7 +1195,7 @@ $l("#lgfp").onclick=function(){toast("تواصل مع الدعم لإعادة ت
 var _a=acctV;acctV=function(){var s=rd(SS,{}),h=_a().replace("<b>حسابي</b>","<b>"+(s.name||"حسابي").replace(/[<>&]/g,"")+"</b>");
 return h+'<button class="acr" data-lo="1"'+(s.guest?'':' style="justify-content:center;color:var(--red)"')+'>'+(s.guest?ic("user"):"")+'<span>'+(s.guest?"تسجيل الدخول":"تسجيل الخروج")+'</span></button>'};
 document.addEventListener("click",function(e){if(e.target.closest("[data-lo]")){try{localStorage.removeItem(SS)}catch(x){}$l("#lgpw").value="";setMode("in");open()}});
-setEye();setMode("in");if(!rd(SS,null))open();
+setEye();setMode("in");if(!rd(SS,null)){var _go=function(){requestAnimationFrame(open)};document.readyState=="loading"?document.addEventListener("DOMContentLoaded",_go):_go()}
 })();
 window.debtsV=function(){var L=orders.filter(function(o){return o.y=="credit"});
 var h='<h2 style="margin-top:4px">ديوني</h2>';
