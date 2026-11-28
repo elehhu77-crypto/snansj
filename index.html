@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
 <title>جملتي kr</title>
+<script>try{if(!JSON.parse(localStorage.getItem("jk_session")))document.documentElement.classList.add("nolg")}catch(e){document.documentElement.classList.add("nolg")}</script>
+<style>html.nolg,html.nolg body{background:var(--card)}html.nolg header.top,html.nolg main,html.nolg nav{visibility:hidden}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap"></noscript>
 <style>
@@ -1174,7 +1176,7 @@ $l("#lgn").hidden=$l("#lgc").hidden=!u;$l("#lgfp").hidden=u;$l("#lgs").textConte
 $l("#lgh").textContent=u?"أنشئ حسابك":"مرحباً بعودتك";$l("#lgp").textContent=u?"ابدأ الطلب من تجار موثّقين بأسعار الجملة":"سجّل دخولك لمتابعة طلبات الجملة";
 $l("#lgst").textContent=u?"لديك حساب بالفعل؟":"ليس لديك حساب؟";$l("#lgsw").textContent=u?"سجّل الدخول":"أنشئ حساباً"}
 function open(){lg.classList.add("on");document.documentElement.style.overflow="hidden"}
-function close(){lg.classList.remove("on");document.documentElement.style.overflow=""}
+function close(){document.documentElement.classList.remove("nolg");lg.classList.remove("on");document.documentElement.style.overflow=""}
 function login(u){wr(SS,{ph:u.ph,name:u.name});close();toast("أهلاً "+u.name+" ✓")}
 $l("#lgsw").onclick=function(){setMode(mode=="in"?"up":"in")};
 $l("#lgeye").onclick=function(){show=!show;setEye()};
